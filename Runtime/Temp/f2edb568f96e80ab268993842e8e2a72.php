@@ -1,0 +1,3 @@
+<?php
+//000000000060a:17:{s:2:"id";s:1:"1";s:6:"mobile";s:11:"15111423714";s:6:"status";s:1:"1";s:7:"open_id";N;s:8:"password";s:32:"45e2d3b84948c2014cbd75fd8ee13d49";s:9:"user_name";s:7:"firefly";s:9:"nick_name";s:2:"13";s:8:"birthday";s:1:"0";s:7:"id_card";N;s:5:"email";s:9:"33@qq.com";s:3:"sex";s:1:"0";s:15:"last_logon_time";s:1:"0";s:4:"salt";N;s:13:"recommendcode";s:1:"0";s:14:"validate_email";s:1:"0";s:15:"member_discount";s:6:"100.00";s:4:"p_id";s:1:"0";}
+?>

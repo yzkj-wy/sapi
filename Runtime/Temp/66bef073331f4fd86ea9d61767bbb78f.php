@@ -1,0 +1,3 @@
+<?php
+//000000000160a:4:{i:0;a:5:{s:2:"id";s:1:"1";s:10:"level_name";s:12:"注册会员";s:11:"create_time";s:11:"15142312333";s:11:"update_time";s:9:"151423211";s:6:"status";s:1:"1";}i:1;a:5:{s:2:"id";s:1:"2";s:10:"level_name";s:12:"金牌会员";s:11:"create_time";s:9:"151423211";s:11:"update_time";s:9:"151423211";s:6:"status";s:1:"1";}i:2;a:5:{s:2:"id";s:1:"3";s:10:"level_name";s:12:"企业会员";s:11:"create_time";s:1:"0";s:11:"update_time";s:1:"0";s:6:"status";s:1:"1";}i:3;a:5:{s:2:"id";s:1:"4";s:10:"level_name";s:12:"分销客户";s:11:"create_time";s:1:"0";s:11:"update_time";s:1:"0";s:6:"status";s:1:"1";}}
+?>

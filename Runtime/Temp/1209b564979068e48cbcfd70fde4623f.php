@@ -1,0 +1,3 @@
+<?php
+//000000000100a:19:{s:2:"id";s:2:"14";s:11:"pay_type_id";s:1:"1";s:11:"pay_account";s:18:"wx68fa4860d905394f";s:5:"mchid";s:10:"1338796801";s:7:"pay_key";s:32:"abcdefghigklmnopqrstuvwxyz123456";s:7:"open_id";s:32:"34c4f7d2a06c7ff0e8c1ae3ea27d37ac";s:11:"create_time";s:10:"1518882365";s:11:"update_time";s:10:"1518882365";s:8:"pay_name";s:29:"Common/Pay/WxGeneralPublicPay";s:11:"return_name";s:19:"Common/Pay/WxRefund";s:4:"type";s:1:"3";s:11:"private_pem";s:26:"/cacert/apiclient_cert.pem";s:10:"public_pem";s:25:"/cacert/apiclient_key.pem";s:10:"notify_url";s:38:"http://wxapi.shopsn.cn/Nofity/wxNofity";s:10:"return_url";s:27:"http://wx.shopsn.cn/success";s:14:"special_status";s:1:"0";s:8:"store_id";s:1:"0";s:7:"paycode";N;s:7:"payname";N;}
+?>
