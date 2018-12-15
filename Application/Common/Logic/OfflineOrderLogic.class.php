@@ -208,7 +208,7 @@ class OfflineOrderLogic extends AbstractGetDataLogic
         //获取总行数
         $allRow=$currentSheet->getHighestRow();
         //循环获取表中的数据，$currentRow表示当前行，从哪行开始读取数据，索引值从0开始
-       
+       $cnt_suc=$allRow-1;
         for($currentRow=2;$currentRow<=$allRow;$currentRow++) {
             //从哪列开始，A表示第一列
             for ($currentColumn = 'A'; $currentColumn != $allColumn; $currentColumn++) {
