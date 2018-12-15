@@ -272,42 +272,48 @@ class OfflineOrderLogic extends AbstractGetDataLogic
                     $hz['address'] = $cell;
                 }
                 if ($currentColumn == "R") {
-                    $hz['insure_fee'] = $cell;
+                    $hz['shipper_name'] = $cell;
                 }
                 if ($currentColumn == "S") {
-                    $hz['goods_id'] = $cell;
+                    $hz['shipper_telephone'] = $cell;
                 }
                 if ($currentColumn == "T") {
-                    $hz['goods_num'] = $cell;
+                    $hz['insure_fee'] = $cell;
                 }
                 if ($currentColumn == "U") {
-                    $hz['type'] = $cell;
+                    $hz['goods_id'] = $cell;
                 }
                 if ($currentColumn == "V") {
-                    $hz['tp_code'] = $cell;
+                    $hz['goods_num'] = $cell;
                 }
                 if ($currentColumn == "W") {
-                    $hz['busi_mode'] = $cell;
+                    $hz['type'] = $cell;
                 }
                 if ($currentColumn == "X") {
-                    $hz['express_id'] = $cell;
+                    $hz['tp_code'] = $cell;
                 }
                 if ($currentColumn == "Y") {
-                    $hz['billno'] = $cell;
+                    $hz['busi_mode'] = $cell;
                 }
                 if ($currentColumn == "Z") {
-                    $hz['bak_one'] = $cell;
+                    $hz['express_id'] = $cell;
                 }
                 if ($currentColumn == "AA") {
-                    $hz['bak_two'] = $cell;
-                }
-                if ($currentColumn == "AB") {
-                    $hz['bak_three'] = $cell;
+                    $hz['billno'] = $cell;
                 }
                 if ($currentColumn == "AC") {
-                    $hz['bak_four'] = $cell;
+                    $hz['bak_one'] = $cell;
                 }
                 if ($currentColumn == "AD") {
+                    $hz['bak_two'] = $cell;
+                }
+                if ($currentColumn == "AE") {
+                    $hz['bak_three'] = $cell;
+                }
+                if ($currentColumn == "AF") {
+                    $hz['bak_four'] = $cell;
+                }
+                if ($currentColumn == "AH") {
                     $hz['bak_five'] = $cell;
                 }
             }
