@@ -63,9 +63,65 @@ abstract class AbstractNotifyController {
 		die();
 		
 	}
-	
-	
-	/**
+
+    public function tlNofity ():void
+    {
+        $this->returnData = $_POST;
+        $this->notify=$this->returnData;
+//        file_put_contents('kjt_test_log.txt',$args['order_sn']."\n", FILE_APPEND | LOCK_EX);
+        file_put_contents('kjt_test_log.txt',json_encode( $this->notify,320)."\n", FILE_APPEND | LOCK_EX);
+
+        $where['mchid']=$this->notify["merchantId"];
+        $where['pay_type_id']=5;
+        $where['special_status']=0;
+        $this->payConfData=M('pay')->field('create_time,update_time,payCode,payName',true)->where($where)->find();
+//        file_put_contents('kjt_test_log.txt',json_encode( $this->payConfData,320)."\n", FILE_APPEND | LOCK_EX);
+        $this->msg( $this->payConfData);
+
+        $tlnotify = new TlNotify($this->returnData, $this->payConfData);
+
+        $verify=$tlnotify->check();
+//        file_put_contents('kjt_test_log.txt',$verify."\n", FILE_APPEND | LOCK_EX);
+//        file_put_contents('kjt_test_log.txt','vertify past'."\n", FILE_APPEND | LOCK_EX);
+        $this->msg($verify);
+
+
+        $where=array();
+
+        $where["order_sn_id"]=$this->notify["orderNo"];
+
+        $this->orderdata=M('order')->field('id,order_sn_id,order_status,store_id')->where($where)->select();
+
+
+//        Hook::add('TlSerial', TlSerialNumber::class);
+
+//        $this->notify['total_amount'] = $this->notify['orderAmount']*100;
+
+//        $this->result = $data;
+
+//        $this->sessionInit();
+
+//        $this->getPayIntegral();
+
+//        $status = $this->orderNotice();
+        $sql['id'] =   $this->orderdata["id"];
+
+        $sql['payment_order_id'] =  $this->notify['paymentOrderId'];
+
+        $sql['status'] =  '1';
+
+        $status=M('offline_order')->save($sql);
+
+        $this->msg($status);
+
+        echo 'SUCCESS';
+
+        die();
+
+    }
+
+
+    /**
 	 * 异步通知
 	 */
 	public function alipayNotify() :void
