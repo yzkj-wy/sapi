@@ -199,7 +199,10 @@ class OfflineOrderLogic extends AbstractGetDataLogic
         //记录导入失败的条数
         $cnt_fal=0;
         //载入文件
-        $PHPExcel=$PHPReader->load($filename);
+
+       $PHPReader->setReadDataOnly(true);
+
+       $PHPExcel=$PHPReader->load($filename);
         //获取表中的第一个工作表，如果要获取第二个，把0改为1，依次类推
         $currentSheet=$PHPExcel->getSheet(0);
         //获取总列数
@@ -208,14 +211,14 @@ class OfflineOrderLogic extends AbstractGetDataLogic
         //获取总行数
         $allRow=$currentSheet->getHighestRow();
         //循环获取表中的数据，$currentRow表示当前行，从哪行开始读取数据，索引值从0开始
-       
+       $cnt_suc=$allRow-1;
         for($currentRow=2;$currentRow<=$allRow;$currentRow++) {
             //从哪列开始，A表示第一列
             for ($currentColumn = 'A'; $currentColumn != $allColumn; $currentColumn++) {
                 //数据坐标
                 $address = $currentColumn . $currentRow;
                 //读取到的数据，保存到数组$arr中
-                $cell = $currentSheet->getCell($address)->getValue();
+                $cell = $currentSheet->getCell($address)->getCalculatedValue();
                 //$cell = $data[$currentRow][$currentColumn];
                 if ($cell instanceof PHPExcel_RichText) {
                     $cell = $cell->__toString();
@@ -272,42 +275,48 @@ class OfflineOrderLogic extends AbstractGetDataLogic
                     $hz['address'] = $cell;
                 }
                 if ($currentColumn == "R") {
-                    $hz['insure_fee'] = $cell;
+                    $hz['shipper_name'] = $cell;
                 }
                 if ($currentColumn == "S") {
-                    $hz['goods_id'] = $cell;
+                    $hz['shipper_telephone'] = $cell;
                 }
                 if ($currentColumn == "T") {
-                    $hz['goods_num'] = $cell;
+                    $hz['insure_fee'] = $cell;
                 }
                 if ($currentColumn == "U") {
-                    $hz['type'] = $cell;
+                    $hz['goods_id'] = $cell;
                 }
                 if ($currentColumn == "V") {
-                    $hz['tp_code'] = $cell;
+                    $hz['goods_num'] = $cell;
                 }
                 if ($currentColumn == "W") {
-                    $hz['busi_mode'] = $cell;
+                    $hz['type'] = $cell;
                 }
                 if ($currentColumn == "X") {
-                    $hz['express_id'] = $cell;
+                    $hz['tp_code'] = $cell;
                 }
                 if ($currentColumn == "Y") {
-                    $hz['billno'] = $cell;
+                    $hz['busi_mode'] = $cell;
                 }
                 if ($currentColumn == "Z") {
-                    $hz['bak_one'] = $cell;
+                    $hz['express_id'] = $cell;
                 }
                 if ($currentColumn == "AA") {
-                    $hz['bak_two'] = $cell;
-                }
-                if ($currentColumn == "AB") {
-                    $hz['bak_three'] = $cell;
+                    $hz['billno'] = $cell;
                 }
                 if ($currentColumn == "AC") {
-                    $hz['bak_four'] = $cell;
+                    $hz['bak_one'] = $cell;
                 }
                 if ($currentColumn == "AD") {
+                    $hz['bak_two'] = $cell;
+                }
+                if ($currentColumn == "AE") {
+                    $hz['bak_three'] = $cell;
+                }
+                if ($currentColumn == "AF") {
+                    $hz['bak_four'] = $cell;
+                }
+                if ($currentColumn == "AH") {
                     $hz['bak_five'] = $cell;
                 }
             }
@@ -318,7 +327,7 @@ class OfflineOrderLogic extends AbstractGetDataLogic
         $store_id =  SessionGet::getInstance('store_id')->get();
         $orderArray = $this->arr_uniq($arr,'order_sn_id');
         foreach($orderArray as $k => $v){
-            if(empty($value['payment_order_id'])){
+            if(empty($v['payment_order_id'])){
                 $v['status'] = 0;
             }else{
                 $v['status'] = 1;

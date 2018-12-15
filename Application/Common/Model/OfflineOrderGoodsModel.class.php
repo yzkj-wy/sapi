@@ -35,7 +35,6 @@ class OfflineOrderGoodsModel extends BaseModel
 
 	public static $saveTime_d;	//修改时间
 
-	public static $qty2_d;	//第二法定数量
 
 
     public static function getInitnation()

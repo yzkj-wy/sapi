@@ -94,6 +94,9 @@ class OfflineOrderModel extends BaseModel
 	public static $storeId_d;	//店铺id
 
 
+	public static $sendExpress_status_d;	//物流单推送状态:0未推送1已推送
+
+
     public static function getInitnation()
     {
         $name = __CLASS__;
