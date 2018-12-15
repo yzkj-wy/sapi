@@ -199,7 +199,10 @@ class OfflineOrderLogic extends AbstractGetDataLogic
         //记录导入失败的条数
         $cnt_fal=0;
         //载入文件
-        $PHPExcel=$PHPReader->load($filename);
+
+       $PHPReader->setReadDataOnly(true);
+
+       $PHPExcel=$PHPReader->load($filename);
         //获取表中的第一个工作表，如果要获取第二个，把0改为1，依次类推
         $currentSheet=$PHPExcel->getSheet(0);
         //获取总列数
@@ -215,7 +218,7 @@ class OfflineOrderLogic extends AbstractGetDataLogic
                 //数据坐标
                 $address = $currentColumn . $currentRow;
                 //读取到的数据，保存到数组$arr中
-                $cell = $currentSheet->getCell($address)->getValue();
+                $cell = $currentSheet->getCell($address)->getCalculatedValue();
                 //$cell = $data[$currentRow][$currentColumn];
                 if ($cell instanceof PHPExcel_RichText) {
                     $cell = $cell->__toString();
@@ -324,7 +327,7 @@ class OfflineOrderLogic extends AbstractGetDataLogic
         $store_id =  SessionGet::getInstance('store_id')->get();
         $orderArray = $this->arr_uniq($arr,'order_sn_id');
         foreach($orderArray as $k => $v){
-            if(empty($value['payment_order_id'])){
+            if(empty($v['payment_order_id'])){
                 $v['status'] = 0;
             }else{
                 $v['status'] = 1;
