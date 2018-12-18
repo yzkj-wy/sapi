@@ -29,12 +29,10 @@ class TlClient {
         $this->params["validtime"] = "60";
         $this->params["notify_url"] = $config['notify_url'];
 
-        file_put_contents('kjt_test_log.txt',json_encode($this->config,320)."\n", FILE_APPEND | LOCK_EX);
     }
     public function SignArray()
     {
         $this->params["sign"] = AppUtil::SignArray($this->params,$this->config['pay_key']);
-        file_put_contents('kjt_test_log.txt',json_encode($this->params,320)."here\n", FILE_APPEND | LOCK_EX);
     }
     
     public function  submit()
@@ -43,8 +41,7 @@ class TlClient {
         $paramsStr = AppUtil::ToUrlParams($this->params);
         $url = AppConfig::APIURL . "/pay";
         $rsp = $this->request($url, $paramsStr);
-        file_put_contents('kjt_test_log.txt',$rsp."\n", FILE_APPEND | LOCK_EX);
-        $rspArray = json_decode($rsp, true); 
+        $rspArray = json_decode($rsp, true);
 
         if($this->validSign($rspArray)){
            return $rspArray;
