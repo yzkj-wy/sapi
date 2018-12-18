@@ -18,34 +18,36 @@ class TlClient {
     public function __construct(array $config = [], array $orderData = [])
     {
         $this->config=$config;
-        $this->arams["cusid"] = $config['pay_account'];
-        $this->params["appid"] = $config['merchantId'];
+        $this->params["cusid"] = $config['mchid'];
+        $this->params["appid"] = $config['pay_account'];
         $this->params["version"] = '11';
-        $this->params["trxamt"] = $orderData['actual_amount'];
+        $this->params["trxamt"] = $orderData['priceSum'];
         $this->params["reqsn"] = $orderData['order_sn_id'];//订单号,自行生成
         $this->params["paytype"] = "W01";
         $this->params["randomstr"] = "JKL3J23J4LKDNF3";//
         $this->params["limit_pay"] = "no_credit";
         $this->params["validtime"] = "60";
         $this->params["notify_url"] = $config['notify_url'];
-        
 
+        file_put_contents('kjt_test_log.txt',json_encode($this->config,320)."\n", FILE_APPEND | LOCK_EX);
     }
     public function SignArray()
     {
         $this->params["sign"] = AppUtil::SignArray($this->params,$this->config['pay_key']);
+        file_put_contents('kjt_test_log.txt',json_encode($this->params,320)."here\n", FILE_APPEND | LOCK_EX);
     }
     
     public function  submit()
     {
-        $this->SignArray;
+        $this->SignArray();
         $paramsStr = AppUtil::ToUrlParams($this->params);
         $url = AppConfig::APIURL . "/pay";
         $rsp = $this->request($url, $paramsStr);
+        file_put_contents('kjt_test_log.txt',$rsp."\n", FILE_APPEND | LOCK_EX);
         $rspArray = json_decode($rsp, true); 
 
         if($this->validSign($rspArray)){
-            echo "验签正确,进行业务处理";
+           return $rspArray;
         }
     }
 

@@ -14,25 +14,27 @@ class Tlpay{
 
     public function __construct(array $config = [], array $orderData = [])
     {
-
+        file_put_contents('kjt_test_log.txt',"here\n", FILE_APPEND | LOCK_EX);
         $this->config = $config;
 
-        $this->orderData = $orderData;
+        $this->orderData = $orderData[0];
     }
 
     public function pay(){
 
 
         $info = $this->orderData ;
-        
-            $res = M('offline_order')->field('order_sn_id，actual_amount')->where('id=' . key($this->orderData))->find();
-//        file_put_contents('kjt_test_log.txt',json_encode($res,320)."\n", FILE_APPEND | LOCK_EX);
+        file_put_contents('kjt_test_log.txt',json_encode($info,320)."\n", FILE_APPEND | LOCK_EX);
+        $res = M('offline_order')->field('order_sn_id,actual_amount')->where('id=' . $this->orderData['order_id'])->find();
+        file_put_contents('kjt_test_log.txt',json_encode($res,320)."\n", FILE_APPEND | LOCK_EX);
 
-            $this->orderData['order_sn_id'] = $res['order_sn_id'];
-        
-        $this->orderData['priceSum']=$res['actual_amount'];
+        $this->orderData['order_sn_id'] = $res['order_sn_id'];
 
-        if (bccomp( $this->orderData['priceSum'], 0.00, 2) === -1 ) {
+        $arr_str=$res['actual_amount']*100;
+
+        $this->orderData['priceSum']=substr($arr_str,0,strlen($arr_str)-3);
+
+        if (bccomp( $this->orderData['priceSum'], 0.00, 5) === -1 ) {
             return [
 
                 'data'=> '',
@@ -52,10 +54,12 @@ class Tlpay{
         SessionGet::getInstance('pay_config_by_user', $payConfig)->set();
 
         $tl=new TlClient($this->config,$this->orderData);
-        
+
+        $data=$tl->submit();
+        file_put_contents('kjt_test_log.txt',json_encode($data,320)."\n", FILE_APPEND | LOCK_EX);
         return [
 
-            'data' =>$tl->submit(),
+            'data' =>$data,
 
             'message' => '成功',
 

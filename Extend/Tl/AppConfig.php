@@ -1,4 +1,5 @@
 <?php
+namespace Extend\Tl;
 /**
  * 常量配置
  */
