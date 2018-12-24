@@ -1,4 +1,5 @@
 <?php
+namespace Extend\Tl;
 class AppUtil{
 	/**
 	 * 将参数数组签名

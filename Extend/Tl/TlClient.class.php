@@ -18,17 +18,16 @@ class TlClient {
     public function __construct(array $config = [], array $orderData = [])
     {
         $this->config=$config;
-        $this->arams["cusid"] = $config['pay_account'];
-        $this->params["appid"] = $config['merchantId'];
+        $this->params["cusid"] = $config['mchid'];
+        $this->params["appid"] = $config['pay_account'];
         $this->params["version"] = '11';
-        $this->params["trxamt"] = $orderData['actual_amount'];
+        $this->params["trxamt"] = $orderData['priceSum'];
         $this->params["reqsn"] = $orderData['order_sn_id'];//订单号,自行生成
         $this->params["paytype"] = "W01";
         $this->params["randomstr"] = "JKL3J23J4LKDNF3";//
         $this->params["limit_pay"] = "no_credit";
         $this->params["validtime"] = "60";
         $this->params["notify_url"] = $config['notify_url'];
-        
 
     }
     public function SignArray()
@@ -38,14 +37,14 @@ class TlClient {
     
     public function  submit()
     {
-        $this->SignArray;
+        $this->SignArray();
         $paramsStr = AppUtil::ToUrlParams($this->params);
         $url = AppConfig::APIURL . "/pay";
         $rsp = $this->request($url, $paramsStr);
-        $rspArray = json_decode($rsp, true); 
+        $rspArray = json_decode($rsp, true);
 
         if($this->validSign($rspArray)){
-            echo "验签正确,进行业务处理";
+           return $rspArray;
         }
     }
 
