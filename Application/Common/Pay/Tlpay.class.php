@@ -55,14 +55,27 @@ class Tlpay{
 
         $data=$tl->submit();
 
+        if($data['retcode']=='SUCCESS')
+
         return [
 
-            'data' =>$data,
+            'data' =>$data['payinfo'],
 
             'message' => '成功',
 
             'status' => 1
         ];
+
+        else
+            return [
+
+                'data' =>null,
+
+                'message' => $data['retmsg'],
+
+                'status' => 0
+            ];
+
     }
 
 }
