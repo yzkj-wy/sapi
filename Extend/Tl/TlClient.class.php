@@ -42,7 +42,7 @@ class TlClient {
         $url = AppConfig::APIURL . "/pay";
         $rsp = $this->request($url, $paramsStr);
         $rspArray = json_decode($rsp, true);
-
+        var_dump($rspArray);
         if($this->validSign($rspArray)){
            return $rspArray;
         }
