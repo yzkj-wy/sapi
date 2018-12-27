@@ -14,6 +14,7 @@ use Common\TraitClass\InitControllerTrait;
 use Common\TraitClass\GETConfigTrait;
 use Common\TraitClass\PayTrait;
 use Think\SessionGet;
+use Extend\Tl\TlNotify;
 /**
  * 通知抽象类
  * @author Administrator
@@ -67,13 +68,11 @@ abstract class AbstractNotifyController {
     public function tlNofity ():void
     {
         $this->returnData = $_POST;
-        $this->notify=$this->returnData;
 //        file_put_contents('kjt_test_log.txt',$args['order_sn']."\n", FILE_APPEND | LOCK_EX);
-        file_put_contents('kjt_test_log.txt',json_encode( $this->notify,320)."\n", FILE_APPEND | LOCK_EX);
-
-        $where['mchid']=$this->notify["merchantId"];
+//        file_put_contents('pay_notify_log.txt',json_encode( $_POST,320)."\n", FILE_APPEND | LOCK_EX);
+        $where['mchid']=$this->returnData["cusid"];
         $where['pay_type_id']=5;
-        $where['special_status']=0;
+        $where['special_status']=5;
         $this->payConfData=M('pay')->field('create_time,update_time,payCode,payName',true)->where($where)->find();
 //        file_put_contents('kjt_test_log.txt',json_encode( $this->payConfData,320)."\n", FILE_APPEND | LOCK_EX);
         $this->msg( $this->payConfData);
@@ -85,36 +84,30 @@ abstract class AbstractNotifyController {
 //        file_put_contents('kjt_test_log.txt','vertify past'."\n", FILE_APPEND | LOCK_EX);
         $this->msg($verify);
 
-
         $where=array();
 
-        $where["order_sn_id"]=$this->notify["orderNo"];
+        $where["order_sn_id"]=$this->returnData["cusorderid"];
 
-        $this->orderdata=M('order')->field('id,order_sn_id,order_status,store_id')->where($where)->select();
+        $this->orderdata=M('offline_order')->field('id,order_sn_id,status,store_id')->where($where)->select();
 
+        if($this->orderdata['status']== 0 && $this->returnData['trxstatus']=='0000')
 
-//        Hook::add('TlSerial', TlSerialNumber::class);
+        {
 
-//        $this->notify['total_amount'] = $this->notify['orderAmount']*100;
+            $sql['id'] = $this->orderdata[0]["id"];
 
-//        $this->result = $data;
+            $sql['payment_order_id'] =  $this->returnData['trxid'];
 
-//        $this->sessionInit();
+            $sql['status'] =  '1';
 
-//        $this->getPayIntegral();
+            $status=M('offline_order')->save($sql);
+        }
 
-//        $status = $this->orderNotice();
-        $sql['id'] =   $this->orderdata["id"];
+        elseif($this->orderdata['status']== 1)
+            $status=0;
 
-        $sql['payment_order_id'] =  $this->notify['paymentOrderId'];
-
-        $sql['status'] =  '1';
-
-        $status=M('offline_order')->save($sql);
-
-        $this->msg($status);
-
-        echo 'SUCCESS';
+        if($status==1)
+            echo 'SUCCESS';
 
         die();
 

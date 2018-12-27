@@ -28,9 +28,7 @@ class Tlpay{
 
         $this->orderData['order_sn_id'] = $res['order_sn_id'];
 
-        $arr_str=$res['actual_amount']*100;
-
-        $this->orderData['priceSum']=substr($arr_str,0,strlen($arr_str)-3);
+        $this->orderData['priceSum']=$res['actual_amount']*100;
 
         if (bccomp( $this->orderData['priceSum'], 0.00, 5) === -1 ) {
             return [
@@ -59,7 +57,7 @@ class Tlpay{
 
         return [
 
-            'data' =>$data['payinfo'],
+            'data' =>$data,
 
             'message' => '成功',
 

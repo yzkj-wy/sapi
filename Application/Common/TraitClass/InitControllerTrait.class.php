@@ -109,6 +109,29 @@ trait InitControllerTrait
         }
     }
 
+    protected function headerOriginInit() :void
+    {
+        $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+
+        $allowOrigin = C('accept');
+
+        if(in_array($origin, $allowOrigin)){
+            header("Access-Control-Allow-Origin:" . $origin);//跨域解决
+            header('Access-Control-Allow-Methods:POST,GET');
+            header('Access-Control-Allow-Headers:Origin, X-Requested-With, Content-Type, Accept');
+            header('Access-Control-Allow-Credentials: true');
+        }
+
+        $sessionId = isset($_POST['token']) ? $_POST['token'] : null;
+
+        if ($sessionId) {
+            session_write_close();
+            session_id($sessionId);
+            session_start();
+        }
+
+    }
+
     /**
      * 添加时 删除id验证
      */

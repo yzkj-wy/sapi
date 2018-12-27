@@ -61,6 +61,7 @@ class OfflineOrderLogic extends AbstractGetDataLogic
         $this->data = $data;
 
         $this->modelObj = new OfflineOrderModel();
+
     }
 
     /**
@@ -178,7 +179,13 @@ class OfflineOrderLogic extends AbstractGetDataLogic
         $res = $this->modelObj->where($where)->save($data);
         return $res;
     }
-   public function goods_import($filename, $exts='xls'){
+
+    /**
+     * @param $filename
+     * @param string $exts
+     * @return mixed
+     */
+    public function offlineorders_import($filename, $exts='xls'){
         vendor("PHPExcel.PHPExcel");
         //创建PHPExcel对象，注意，不能少了\
         $PHPExcel=new \PHPExcel();
@@ -322,54 +329,225 @@ class OfflineOrderLogic extends AbstractGetDataLogic
             }
             $arr[] = $hz;
         }
+        //初始化添加条数数据
+        $success_count=0;
         $orderGoodsModel = new OfflineOrderGoodsModel();
         M()->startTrans();
         $store_id =  SessionGet::getInstance('store_id')->get();
         $orderArray = $this->arr_uniq($arr,'order_sn_id');
-        foreach($orderArray as $k => $v){
-            if(empty($v['payment_order_id'])){
+        //获取当前店铺里面所有的order_sn_id字段 一个三维数组
+        $row = M('offline_order')->field('order_sn_id')->where(['store_id' => $store_id])->select();
+        //将三围数组遍历得到二维数组 并将需要的order_sn__id获取到
+        foreach($row as $ke => $va){
+            //得到一个一维数组
+            $rva[]=$va['order_sn_id'];
+        }
+        //将预添加的数据得到并遍历.得到相应的值
+        foreach($orderArray as $k => $v) {
+            if (empty($v['payment_order_id'])) {
                 $v['status'] = 0;
-            }else{
+            } else {
                 $v['status'] = 1;
             }
             $v['add_time'] = time();
             $v['store_id'] = $store_id;
-            if(!empty($v['order_sn_id'])){
-                $res = $this->modelObj->add($v);
-                if(!$res){
-                    M()->rollback();
-                    $data['data']= '';
-                    $data['status']= 0;
-                    $data['message']='导入失败';
-                    return  $data;
+            //判断添加的数据是否存在 存在说明添加的数据重复
+            if(in_array($v['order_sn_id'],$rva)){
+                foreach($orderArray as $kk =>$vv){
+                    if(in_array($vv['order_sn_id'],$rva)){
+                        $cnt_fal+=1;
+                        //获取重复的数据
+                        $data['data']['faile_list'][$vv['order_sn_id']]='订单号重复';
+                        $data['data']['cnt_fal']=$cnt_fal;
+                        $data['message']='插入数据异常';
+                        $data['status']=0;
+                    }else{
+                        $success_count+=1;
+                        $data['data']['success_count']=$success_count;
+                    }
+
                 }
+               return $data;
             }
-        }
-        foreach($arr as $key => $value){
-            $orderGoodsArray['order_sn_id'] = $value['order_sn_id'];
-            $orderGoodsArray['goods_id'] = $value['goods_id'];
-            $orderGoodsArray['goods_num'] = $value['goods_num'];
-            $orderGoodsArray['add_time'] = time();
-            $orderGoodsArray['save_time'] = time();
-            if(!empty($value['order_sn_id'])) {
-                $ret = $orderGoodsModel->add($orderGoodsArray);
-                if (!$ret) {
+            if (!empty($v['order_sn_id'])) {
+                $res = $this->modelObj->add($v);
+                if (!$res) {
                     M()->rollback();
                     $data['data'] = '';
                     $data['status'] = 0;
                     $data['message'] = '导入失败';
-                    return  $data;
+                    return $data;
                 }
             }
         }
-
+            foreach ($arr as $key => $value) {
+                $orderGoodsArray['order_sn_id'] = $value['order_sn_id'];
+                $orderGoodsArray['goods_id'] = $value['goods_id'];
+                $orderGoodsArray['goods_num'] = $value['goods_num'];
+                $orderGoodsArray['add_time'] = time();
+                $orderGoodsArray['save_time'] = time();
+                if (!empty($value['order_sn_id'])) {
+                    $ret = $orderGoodsModel->add($orderGoodsArray);
+                    if (!$ret) {
+                        M()->rollback();
+                        $data['data'] = '';
+                        $data['status'] = 0;
+                        $data['message'] = '导入失败';
+                        return $data;
+                    }
+                }
+            }
         M()->commit();
-
+        if($success_count == $cnt_suc){
+            $cnt_suc=$cnt_suc;
+        }else{
+            $cnt_suc=$success_count;
+        }
         $data['data']= '导入成功的条数'.$cnt_suc;
         $data['status']= 1;
         $data['message']='导入成功';
         return  $data;
 
+    }
+    public function goods_import($filename, $exts='xls')
+    {
+        vendor("PHPExcel.PHPExcel");
+        //创建PHPExcel对象，注意，不能少了\
+        $PHPExcel=new \PHPExcel();
+        //如果excel文件后缀名为.xls，导入这个类
+        if($exts == 'xls'){
+            import("Org.Util.PHPExcel.Reader.Excel5");
+            $PHPReader=new \PHPExcel_Reader_Excel5();
+        }else if($exts == 'xlsx'){
+            import("Org.Util.PHPExcel.Reader.Excel2007");
+            $PHPReader=new \PHPExcel_Reader_Excel2007();
+        }
+        $arr=[];
+        $GoodsArray = [];
+
+        //记录导入成功的条数
+        $cnt_suc=0;
+        //记录导入失败的条数
+        $cnt_fal=0;
+        //载入文件
+
+        $PHPReader->setReadDataOnly(true);
+
+        $PHPExcel=$PHPReader->load($filename);
+        //获取表中的第一个工作表，如果要获取第二个，把0改为1，依次类推
+        $currentSheet=$PHPExcel->getSheet(0);
+        //获取总列数
+        $allColumn=$currentSheet->getHighestColumn();
+        ++$allColumn;
+        //获取总行数
+        $allRow=$currentSheet->getHighestRow();
+        //循环获取表中的数据，$currentRow表示当前行，从哪行开始读取数据，索引值从0开始
+        $cnt_suc=0;
+        for($currentRow=2;$currentRow<=$allRow;$currentRow++) {
+            //从哪列开始，A表示第一列
+            for ($currentColumn = 'B'; $currentColumn != $allColumn; $currentColumn++) {
+                //数据坐标
+                $address = $currentColumn . $currentRow;
+                //读取到的数据，保存到数组$arr中
+                $cell = $currentSheet->getCell($address)->getCalculatedValue();
+                //$cell = $data[$currentRow][$currentColumn];
+                if ($cell instanceof PHPExcel_RichText) {
+                    $cell = $cell->__toString();
+                }
+                if ($currentColumn == "B") {
+                    $hz['title'] = $cell;
+                }
+                if ($currentColumn == "C") {
+                    $hz['price_market'] = $cell;
+                    $hz['price_member'] = $cell;
+                }
+                if ($currentColumn == "D") {
+                    $hz['description'] = $cell;
+                }
+                if ($currentColumn == "E") {
+                    $hz['weight'] = $cell;
+                }
+                if ($currentColumn == "F") {
+                    $hz['netwt'] = $cell;
+                }
+                if ($currentColumn == "G") {
+                    $hz['country'] = $cell;
+                }
+                if ($currentColumn == "H") {
+                    $hz['itemno'] = $cell;
+                }
+                if ($currentColumn == "I") {
+                    $hz['entgoodsno'] = $cell;
+                }
+                if ($currentColumn == "J") {
+                    $hz['inspProdCbecCode'] = $cell;
+                }
+                if ($currentColumn == "K") {
+                    $hz['inspProdSpecs'] = $cell;
+                }
+                if ($currentColumn == "L") {
+                    $hz['goodsinfo'] = $cell;
+                }
+                if ($currentColumn == "M") {
+                    $hz['note'] = $cell;
+                }
+                if ($currentColumn == "N") {
+                    $hz['wraptype'] = $cell;
+                }
+                if ($currentColumn == "O") {
+                    $hz['note2'] = $cell;
+                }
+                if ($currentColumn == "P") {
+                    $hz['unit1'] = $cell;
+                }
+                if ($currentColumn == "Q") {
+                    $hz['unit2'] = $cell;
+                }
+                if ($currentColumn == "R") {
+                    $hz['qty1'] = $cell;
+                }
+                if ($currentColumn == "S") {
+                    $hz['qty2'] = $cell;
+                }
+                if ($currentColumn == "T") {
+                    $hz['taxFcy'] = $cell;
+                }
+                if ($currentColumn == "U") {
+                    $hz['taxTotal'] = $cell;
+                }
+            }
+            $arr[] = $hz;
+        }
+        $GoodsModel = new GoodsModel();
+        M()->startTrans();
+        $store_id =  SessionGet::getInstance('store_id')->get();
+        $GoodsArray = $arr;
+        foreach ($GoodsArray as $key => $value) {
+            if ($value['title'] != null) {
+            $value['class_id'] = 950;
+            $value['class_two'] = 951;
+            $value['class_three'] = 952;
+            $value['store_id'] = $store_id;
+            $value['approval_status'] = 1;
+            $value['update_time'] = time();
+            $value['create_time'] = time();
+
+                $ret = $GoodsModel->add($value);
+                if (!$ret) {
+                    M()->rollback();
+                    $data['data'] = '';
+                    $data['status'] = 0;
+                    $data['message'] = '导入失败';
+                    return $data;
+                } else
+                    $cnt_suc++;
+            }
+        }
+        M()->commit();
+        $data['data']= '导入成功的条数'.$cnt_suc;
+        $data['status']= 1;
+        $data['message']='导入成功';
+        return  $data;
     }
     /**
      * 二维数组按照指定键值去重

@@ -78,11 +78,40 @@ class OfflineOrderController
             $data['message']='上传失败';
             $this->objController->ajaxReturnData($data['data'],$data['status'],$data['message']);
         }else{// 上传成功
+            $res = $this->logic->offlineorders_import($filename, $exts);
+            $this->objController->ajaxReturnData($res['data'],$res['status'],$res['message']);
+        }
+    }
+//上传goods
+    public function importGoodsUploads(){
+        header("Content-Type:textml;charset=utf-8");
+        header("Access-Control-Allow-Origin:*");
+        header("Access-Control-Allow-Headers:content-type");
+        header("Access-Control-Request-Method:GET,POST");
+        if(strtoupper($_SERVER['REQUEST_METHOD'])=='OPTIONS'){
+            exit;
+        }
+        $upload = new Upload();// 实例化上传类
+        $upload->maxSize   =     31457280000 ;// 设置附件上传大小
+        $upload->exts      =     array('xls', 'xlsx');// 设置附件上传类
+        $upload->savePath  =      'order/'; // 设置附件上传目录
+        // 上传文件
+
+        $info   =   $upload->uploadOne($_FILES['file']);
+        $filename = $upload->rootPath.$info['savepath'].$info['savename'];
+        $exts = $info['ext'];
+        //print_r($info);exit;
+        if(!$info) {// 上传错误提示错误信息
+            $data['data']=$upload->getError();
+            $data['status']=0;
+            $data['message']='上传失败';
+            $this->objController->ajaxReturnData($data['data'],$data['status'],$data['message']);
+        }else{// 上传成功
             $res = $this->logic->goods_import($filename, $exts);
             $this->objController->ajaxReturnData($res['data'],$res['status'],$res['message']);
         }
     }
-  
+
     //订单列表
     public function orderList(){
         $data = $this->logic->getOrderList();

@@ -9,7 +9,7 @@
 // | Author: 王强 <opjklu@126.com>
 // +----------------------------------------------------------------------
 declare(strict_types = 1);
-namespace Home\Controller;
+namespace Admin\Controller;
 
 use Think\Controller;
 
