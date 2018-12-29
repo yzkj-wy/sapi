@@ -6,15 +6,15 @@ trait MakeMessageTrait {
      * 报文格式 json
      */
 
-    public function DaLianZT ($data, $type)
+    public function DaLianZT ($data)
     {
         $orderId = $data['order_sn_id'];
-        $orderDate = $data['create_time'];
+        $orderDate = date('Y-m-dH:i:s',strtotime($data['create_time']));
         $packingMaterial = null;
         $warehouseId = null;
         $tpl = $data['tpl'];
         $orderType = 2;
-        $orderStatus = $type;
+        $orderStatus = 'S';
         $customsType = 2;
         $electricCode = $data['electricCode'];
         $cbepcomCode = $data['cbepcomCode'];
@@ -22,7 +22,7 @@ trait MakeMessageTrait {
         $customsCode = '0904';
         $ciqbCode = '211920';
         $stationbCode = null;
-        $deliveryCode = $data['express_id'];
+        $deliveryCode = null;
         $notes = null;
         $freightFcy = $data['freight'];
         $freightFcode = 'CNY';
@@ -73,7 +73,7 @@ trait MakeMessageTrait {
         $payStatus = null;
         $payorName = null;
         $activePayComp = null;
-        $acturalPaid = $data['price_sum']-$data['coupon_deductible']+$data['taxFcy']+$data['freight'];
+        $acturalPaid = $data['actual_amount'];
         $payCurr = null;
         $payNots = null;
         $payDate = null;
@@ -94,21 +94,21 @@ trait MakeMessageTrait {
         $reDeclare = null;
 
         //goodList数组
-        $goodList = $data['goodList'];
+        $goodList = $data['goodlist'];
         if( is_array($goodList) ) {
             foreach ($goodList as $k => $gooListValue) {
                 $goodList[$k]['gnum'] = $k * 1 + 1;
                 $goodList[$k]['goodId'] = $gooListValue['itemno'];
                 $goodList[$k]['amount'] = $gooListValue['goods_num'];
-                $goodList[$k]['price'] = $gooListValue['goods_price'];
+                $goodList[$k]['price'] = $gooListValue['price_member'];
                 $goodList[$k]['goodPrice'] = null;
                 $goodList[$k]['copGName'] = null;
                 $goodList[$k]['hsCode'] = null;
                 $goodList[$k]['codeTs'] = null;
                 $goodList[$k]['decTotal'] = null;
                 $goodList[$k]['nots'] = null;
-                $goodList[$k]['custGoodsNo'] = $gooListValue['entgoodsno'];
-                $goodList[$k]['ciqGoodsNo'] = null;
+                $goodList[$k]['custGoodsNo'] = null;
+                $goodList[$k]['ciqGoodsNo'] = $gooListValue['inspProdCbecCode'];
                 $goodList[$k]['batchNo'] = null;
                 $goodList[$k]['assemCountry'] = null;
                 $goodList[$k]['qtyUnit'] = null;
@@ -141,9 +141,9 @@ trait MakeMessageTrait {
                 $recipient['province'] = $data['prov'];
                 $recipient['city'] = $data['city'];
                 $recipient['district'] = $data['dist'];
-                $recipient['address'] = null;
+                $recipient['address'] = $data['prov']. $data['city'].$data['dist'].$data['address'];
                 $recipient['postCode'] = null;
-                $recipient['totalFavourable'] = null;
+                $recipient['totalFavourable'] = 0;
                 $recipient['sender'] = null;
                 $recipient['receiver'] = null;
                 $recipient['congratulations'] = null;
@@ -254,19 +254,19 @@ trait MakeMessageTrait {
     {
         $VERSION = 'v5.6';
         $VISITOR_ID = 'MCT';
-        $MCHT_ID = $data['mcht_id_ceb'];
+        $MCHT_ID = $data['mcht_id'];
         $ORDER_NO = date('YmdHis').mt_rand(111111111,999999999);
         $TRANS_DATETIME = date('YmdHis');
         $CHARSET = '1';
         $SIGN_TYPE = '1';
         $SIGN_MSG = null;
         $CUSTOMS_CODE = 'HG020';
-        $PAYMENT_CHANNEL = $data['pay_type_id'];
-        $CUS_ID = $data['mcht_id'];
+        $PAYMENT_CHANNEL = '2';
+        $CUS_ID = $data['mchid'];
         $PAYMENT_DATETIME = $data['pay_time'];
         $MCHT_ORDER_NO = $data['order_sn_id'];
         $PAYMENT_ORDER_NO = $data['paymentOrderId'];
-        $PAYMENT_AMOUNT = $data['price_sum'];
+        $PAYMENT_AMOUNT = $data['actual_amount']*100;
         $CURRENCY = '156';
         $ESHOP_ENT_CODE = $data['ebpCode'];
         $ESHOP_ENT_NAME = $data['ebpName'];
@@ -293,7 +293,7 @@ trait MakeMessageTrait {
             "<PAPER_PHONE>".$PAPER_PHONE."</PAPER_PHONE>" .
             "<MEMO>".$MEMO."</MEMO>" .
             "</BODY>" .
-            "<key>".$data['key']."</key>" ;
+            "<key>".$data['pay_key']."</key>" ;
         $SIGN_MSG=md5($SIGN_MSG_Str);
 
 
@@ -346,20 +346,20 @@ trait MakeMessageTrait {
         $Version = '1.0';
         $V_ORDERTYPE = '1';
         $V_ORDERNO = $data['order_sn_id'];
-        $D_ORDERDATE = $data['create_time'];
+        $D_ORDERDATE = date('Y-m-d',strtotime($data['create_time'])).'T'.date('H:i:s',strtotime($data['create_time']));
         $V_EBPCODE = $data['ebpCode'];
         $V_EBCCODE = $data['ebcCode'];
-        $V_CBECOMCODE = $data['inspCbeCode'];
+        $V_CBECOMCODE = $data['inspEntCode'];
         $V_CBEPCOMCODE = $data['inspEcpCode'];
-        $V_INTERNETDOMAINNAME = $data['internetdomainname'];
+        $V_INTERNETDOMAINNAME = $data['domain_name'];
         $V_PAYCODE = $data['payCode'];
-        $V_PAYNAME = $data['payName'];
+        $V_PAYNAME = $data['enterprise_name'];
         $V_PAYTRANSACTIONID = $data['paymentOrderId'];
         $N_GOODSVALUE = $data['price_sum'] ;
         $N_FREIGHT = $data['freight'];
         $N_DISCOUNT = $data['coupon_deductible'];
         $N_TAXTOTAL = $data['taxFcy'];
-        $N_ACTURALPAID = $data['price_sum']-$data['coupon_deductible']+$data['taxFcy']+$data['freight'];
+        $N_ACTURALPAID = $data['actual_amount'];
         $V_CURRENCY = '142';
         $V_BUYERREGNO = $data['user_name'];
         $V_BUYERNAME = $data['realname'];
@@ -371,8 +371,8 @@ trait MakeMessageTrait {
         $V_PLATFORM_NO = $data['platform_no'];
         $V_PLATFORM_SHORT = $data['platform_short'];
         $V_PL_BUSINESS_NO = $data['store_id'];
-        $V_PL_BUSINESS_SHORT = $data['shop_name'];
-        $V_APPTYPE = $apptype;
+        $V_PL_BUSINESS_SHORT = $data['ebpName'];
+        $V_APPTYPE = $data['send_express_status']?'1':'2';
         $N_INSUREFEE = $data['insurefee'];
         $N_WEIGHT = $data['weight'];
         $N_NETWT = $data['netwt'];
@@ -508,7 +508,7 @@ trait MakeMessageTrait {
         $freight = $data['freight'];
         $discount = $data['coupon_deductible'];
         $taxTotal = $data['taxFcy'];
-        $acturalPaid = $data['price_sum']-$data['coupon_deductible']+$data['taxFcy']+ $data['freight'];
+        $acturalPaid = $data['actual_amount'];
         $currency = '142';
         $buyerRegNo = $data['user_name'];
         $buyerName = $data['realname'];
@@ -516,17 +516,17 @@ trait MakeMessageTrait {
         $buyerIdType = '1';
         $buyerIdNumber = $data['IdNumber'];
         $payCode = $data['payCode'];
-        $payName = $data['payName'];
+        $payName = $data['pay_name'];
         $payTransactionId = $data['paymentOrderId'];
         $batchNumbers = null;
         $consignee = $data['realname'];
         $consigneeTelephone = $data['mobile'];
-        $consigneeAddress = $data['prov'].$data['prov'].$data['address'];
+        $consigneeAddress = $data['prov'].$data['city'].$data['dist'].$data['address'];
         $consigneeDitrict = null;
         $note = null;
 
         //OrderList
-        $OrderList = $data['OrderList'];
+        $OrderList = $data['goodlist'];
         if (is_array($OrderList) ) {
             $OrderListXML = null;
             foreach ($OrderList as $k => $OrderListValue) {
@@ -537,10 +537,10 @@ trait MakeMessageTrait {
                 $OrderListXML .= "<ceb:gmodel>".$OrderListValue['gmodel']."</ceb:gmodel>";
                 $OrderListXML .= "<ceb:itemDescribe>".$OrderListValue['description']."</ceb:itemDescribe>";
                 $OrderListXML .= "<ceb:barCode></ceb:barCode>";
-                $OrderListXML .= "<ceb:unit>".$OrderListValue['unit']."</ceb:unit>";
+                $OrderListXML .= "<ceb:unit>".$OrderListValue['unit1']."</ceb:unit>";
                 $OrderListXML .= "<ceb:qty>".$OrderListValue['goods_num']."</ceb:qty>";
-                $OrderListXML .= "<ceb:price>".$OrderListValue['goods_price']."</ceb:price>";
-                $OrderListXML .= "<ceb:totalPrice>".($OrderListValue['goods_num'] * $OrderListValue['goods_price'])."</ceb:totalPrice>";
+                $OrderListXML .= "<ceb:price>".$OrderListValue['price_member']."</ceb:price>";
+                $OrderListXML .= "<ceb:totalPrice>".($OrderListValue['goods_num'] * $OrderListValue['price_member'])."</ceb:totalPrice>";
                 $OrderListXML .= "<ceb:currency>142</ceb:currency>";
                 $OrderListXML .= "<ceb:country>".$OrderListValue['country']."</ceb:country>";
                 $OrderListXML .= "<ceb:note>".$OrderListValue['note']."</ceb:note>";
@@ -590,7 +590,7 @@ trait MakeMessageTrait {
                 $InspOrderListtXML .= "<gnum>" . ($k * 1 + 1) . "<gnum>";
                 $InspOrderListtXML .= "<inspCurrUnit>142</inspCurrUnit>";
                 $InspOrderListtXML .= "<inspOriCtryCode>" . $OrderListValue['country'] . "</inspOriCtryCode>";
-                $InspOrderListtXML .= "<inspQtyUnitCode>" . $OrderListValue['unit1'] . "</inspQtyUnitCode>";
+                $InspOrderListtXML .= "<inspQtyUnitCode>" . $OrderListValue['unit'] . "</inspQtyUnitCode>";
                 $InspOrderListtXML .= "<inspPackNumber>" . $OrderListValue['goods_num'] . "</inspPackNumber>";
                 $InspOrderListtXML .= "<spPinackTypeCode>" . $OrderListValue['note2'] . "</inspPackTypeCode>";
                 $InspOrderListtXML .= "<inspProdSpecs>" . $OrderListValue['inspProdSpecs'] . "</inspProdSpecs>";

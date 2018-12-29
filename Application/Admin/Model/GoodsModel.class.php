@@ -105,8 +105,8 @@ class GoodsModel extends BaseModel
     public static $unit2_d;  //法定第二计量单位
     public static $qty1_d;  //法定第一数量
     public static $qty2_d;  //法定第二数量
-    public static $taxFcy_d;  //税费
-    public static $taxTotal_d;  //代扣税款
+    public static $taxTotal_d;  //税费
+    public static $taxFcy_d;  //代扣税款
 
     public static function getInitnation()
     {

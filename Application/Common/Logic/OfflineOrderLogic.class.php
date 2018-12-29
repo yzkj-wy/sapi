@@ -352,12 +352,11 @@ class OfflineOrderLogic extends AbstractGetDataLogic
             $v['add_time'] = time();
             $v['store_id'] = $store_id;
             //判断添加的数据是否存在 存在说明添加的数据重复
-            if(in_array($v['order_sn_id'],$rva)){
-                foreach($orderArray as $kk =>$vv){
-                    if(in_array($vv['order_sn_id'],$rva)){
+
+                    if($rva && in_array($v['order_sn_id'],$rva)){
                         $cnt_fal+=1;
                         //获取重复的数据
-                        $data['data']['faile_list'][$vv['order_sn_id']]='订单号重复';
+                        $data['data']['faile_list'][$v['order_sn_id']]='订单号重复';
                         $data['data']['cnt_fal']=$cnt_fal;
                         $data['message']='插入数据异常';
                         $data['status']=0;
@@ -366,9 +365,9 @@ class OfflineOrderLogic extends AbstractGetDataLogic
                         $data['data']['success_count']=$success_count;
                     }
 
-                }
-               return $data;
-            }
+
+
+
             if (!empty($v['order_sn_id'])) {
                 $res = $this->modelObj->add($v);
                 if (!$res) {
@@ -380,6 +379,8 @@ class OfflineOrderLogic extends AbstractGetDataLogic
                 }
             }
         }
+        if($cnt_fal!=0)
+            return $data;
             foreach ($arr as $key => $value) {
                 $orderGoodsArray['order_sn_id'] = $value['order_sn_id'];
                 $orderGoodsArray['goods_id'] = $value['goods_id'];

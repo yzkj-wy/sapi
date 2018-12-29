@@ -60,6 +60,7 @@ class DLKJController
 
         $orderdata = $this->logic->getOfflineOrderDetails();
 
+
         if($orderdata['statue']==0){
 
             $data=array (
@@ -90,8 +91,9 @@ class DLKJController
                 //$string组装成文件，提供下载
 				
 				try {
-					$filename = 'JKF_京东_新增_订单_订单号_20160523153038.xml';//xml文件名称
-					$fp = fopen($file1, 'w');
+				    $path='/message/'.$orderdata['platform_short'].'/order/'.date('Ymd').'/';
+					$filename = 'JKF_'.$orderdata['platform_short'].'_1_CEB311_'.$orderdata['order_sn_id'].'_'.date('YmdHis').'.xml';//xml文件名称
+					$fp = fopen($path.$filename, 'w');
 					fwrite($fp, $string);
 					fclose($fp);				
 					
@@ -100,13 +102,16 @@ class DLKJController
 						"status" => 1,
 
 						"data" => array (
-							"downurl" => '/company01/20181206/' + $filename,
+							"downurl" => $path.$filename,
 							"filename" => $filename
 						),
 
 						"message" => ""
 					);
-				} catch () {
+                    $sql['id']=$orderdata['id'];
+                    $sql['send_order_status']='1';
+                    M('offline_order')->save($sql);
+				} catch (exception $e) {
 					$data=array (
 
 						"status" => 0,
@@ -132,6 +137,7 @@ class DLKJController
 
         $orderdata = $this->logic->getOfflineOrderDetails();
 
+
         if($orderdata['statue']==0){
 
             $data=array (
@@ -145,6 +151,12 @@ class DLKJController
         }
         else{
             $string=$this->DaLiaTongLianZF($orderdata);
+
+            $path='/message/log/'.$orderdata['platform_short'].'/pay/'.date('Ymd').'/';
+            $filename = $orderdata['platform_short'].'_'.$orderdata['order_sn_id'].'_'.date('YmdHis').'.xml';//xml文件名称
+            $fp = fopen($path.$filename, 'w');
+            fwrite($fp, $string);
+            fclose($fp);
 
             if (empty ($string)) {
 
@@ -174,7 +186,9 @@ class DLKJController
 
                         "message" => ""
                     );
-
+                $sql['id']=$orderdata['id'];
+                $sql['send_pay_status']='1';
+                M('offline_order')->save($sql);
                 }
                 else{
                     $data=array (
@@ -199,6 +213,7 @@ class DLKJController
 
         $orderdata = $this->logic->getOfflineOrderDetails();
 
+
         if($orderdata['statue']==0){
 
             $data=array (
@@ -212,6 +227,12 @@ class DLKJController
         }
         else{
             $string=$this->BCKuaJing($orderdata,$this->args['type']);
+
+            $path='/message/log/'.$orderdata['platform_short'].'/BC/'.date('Ymd').'/';
+            $filename = $orderdata['platform_short'].'_'.$orderdata['order_sn_id'].'_'.date('YmdHis').'.xml';//xml文件名称
+            $fp = fopen($path.$filename, 'w');
+            fwrite($fp, $string);
+            fclose($fp);
 
             if (empty ($string)) {
 
@@ -255,7 +276,9 @@ class DLKJController
 
                         "message" => ""
                     );
-
+                    $sql['id']=$orderdata['id'];
+                    $sql['send_express_status']='1';
+                    M('offline_order')->save($sql);
                 }
                 else{
                     $data=array (
@@ -280,6 +303,7 @@ class DLKJController
 
         $orderdata = $this->logic->getOfflineOrderDetails();
 
+
         if($orderdata['statue']==0){
 
             $data=array (
@@ -293,6 +317,12 @@ class DLKJController
         }
         else{
             $string=$this->DaLianZT($orderdata);
+
+            $path='/message/log/'.$orderdata['platform_short'].'/BBC/'.date('Ymd').'/';
+            $filename = $orderdata['platform_short'].'_'.$orderdata['order_sn_id'].'_'.date('YmdHis').'.txt';//xml文件名称
+            $fp = fopen($path.$filename, 'w');
+            fwrite($fp, $string);
+            fclose($fp);
 
             if (empty ($string)) {
 
@@ -327,6 +357,9 @@ class DLKJController
 
                         "message" => ""
                     );
+                    $sql['id']=$orderdata['id'];
+                    $sql['send_express_status']='1';
+                    M('offline_order')->save($sql);
 
                 }
                 else{

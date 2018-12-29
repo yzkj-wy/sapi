@@ -38,7 +38,7 @@ use Think\Cache;
  * @version 1.0.0
  * @tutorial what are you doing with you ? I don't know I true or false. Look at the black bord ,listen to me tall forly.
  */
-class OfflineOrderLogic extends AbstractGetDataLogic
+class OfflineOrderGoodsLogic extends AbstractGetDataLogic
 {
     protected $orderStatus = [2, 3, 4];//获取指定订单状态
 
