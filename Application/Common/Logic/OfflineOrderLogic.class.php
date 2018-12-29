@@ -499,22 +499,25 @@ class OfflineOrderLogic extends AbstractGetDataLogic
                     $hz['note2'] = $cell;
                 }
                 if ($currentColumn == "P") {
-                    $hz['unit1'] = $cell;
+                    $hz['unit'] = $cell;
                 }
                 if ($currentColumn == "Q") {
-                    $hz['unit2'] = $cell;
+                    $hz['unit1'] = $cell;
                 }
                 if ($currentColumn == "R") {
-                    $hz['qty1'] = $cell;
+                    $hz['unit2'] = $cell;
                 }
                 if ($currentColumn == "S") {
-                    $hz['qty2'] = $cell;
+                    $hz['qty1'] = $cell;
                 }
                 if ($currentColumn == "T") {
-                    $hz['taxFcy'] = $cell;
+                    $hz['qty2'] = $cell;
                 }
                 if ($currentColumn == "U") {
                     $hz['taxTotal'] = $cell;
+                }
+                if ($currentColumn == "V") {
+                    $hz['taxFcy'] = $cell;
                 }
             }
             $arr[] = $hz;
