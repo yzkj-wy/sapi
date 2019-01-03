@@ -59,9 +59,10 @@ class DLKJController
     public function send_DaLianKJ(){
 
         $orderdata = $this->logic->getOfflineOrderDetails();
+var_dump($orderdata);
+//exit();
 
-
-        if($orderdata['statue']==0){
+        if($orderdata['status']==0){
 
             $data=array (
 
@@ -91,12 +92,15 @@ class DLKJController
                 //$string组装成文件，提供下载
 				
 				try {
-				    $path='/message/'.$orderdata['platform_short'].'/order/'.date('Ymd').'/';
+				    $path='./message/'.$orderdata['platform_short'].'/order/'.date('Ymd').'/';
 					$filename = 'JKF_'.$orderdata['platform_short'].'_1_CEB311_'.$orderdata['order_sn_id'].'_'.date('YmdHis').'.xml';//xml文件名称
-					$fp = fopen($path.$filename, 'w');
-					fwrite($fp, $string);
-					fclose($fp);				
-					
+//					$fp = fopen($path.$filename, 'w');
+//					fwrite($fp, $string);
+//					fclose($fp);
+                    if(!is_dir($path)){
+                        mkdir($path,0777,true);
+                    }
+                    file_put_contents($path.$filename,$string, FILE_APPEND | LOCK_EX);
 					$data=array (
 
 						"status" => 1,
@@ -138,7 +142,7 @@ class DLKJController
         $orderdata = $this->logic->getOfflineOrderDetails();
 
 
-        if($orderdata['statue']==0){
+        if($orderdata['status']==0){
 
             $data=array (
 
@@ -154,10 +158,13 @@ class DLKJController
 
             $path='/message/log/'.$orderdata['platform_short'].'/pay/'.date('Ymd').'/';
             $filename = $orderdata['platform_short'].'_'.$orderdata['order_sn_id'].'_'.date('YmdHis').'.xml';//xml文件名称
-            $fp = fopen($path.$filename, 'w');
-            fwrite($fp, $string);
-            fclose($fp);
-
+//            $fp = fopen($path.$filename, 'w');
+//            fwrite($fp, $string);
+//            fclose($fp);
+            if(!is_dir($path)){
+                mkdir($path,0777,true);
+            }
+            file_put_contents($path.$filename,$string."\n", FILE_APPEND | LOCK_EX);
             if (empty ($string)) {
 
                 $data=array (
@@ -214,7 +221,7 @@ class DLKJController
         $orderdata = $this->logic->getOfflineOrderDetails();
 
 
-        if($orderdata['statue']==0){
+        if($orderdata['status']==0){
 
             $data=array (
 
@@ -230,10 +237,13 @@ class DLKJController
 
             $path='/message/log/'.$orderdata['platform_short'].'/BC/'.date('Ymd').'/';
             $filename = $orderdata['platform_short'].'_'.$orderdata['order_sn_id'].'_'.date('YmdHis').'.xml';//xml文件名称
-            $fp = fopen($path.$filename, 'w');
-            fwrite($fp, $string);
-            fclose($fp);
-
+//            $fp = fopen($path.$filename, 'w');
+//            fwrite($fp, $string);
+//            fclose($fp);
+            if(!is_dir($path)){
+                mkdir($path,0777,true);
+            }
+            file_put_contents($path.$filename,$string."\n", FILE_APPEND | LOCK_EX);
             if (empty ($string)) {
 
                 $data=array (
@@ -304,7 +314,7 @@ class DLKJController
         $orderdata = $this->logic->getOfflineOrderDetails();
 
 
-        if($orderdata['statue']==0){
+        if($orderdata['status']==0){
 
             $data=array (
 
@@ -320,10 +330,13 @@ class DLKJController
 
             $path='/message/log/'.$orderdata['platform_short'].'/BBC/'.date('Ymd').'/';
             $filename = $orderdata['platform_short'].'_'.$orderdata['order_sn_id'].'_'.date('YmdHis').'.txt';//xml文件名称
-            $fp = fopen($path.$filename, 'w');
-            fwrite($fp, $string);
-            fclose($fp);
-
+//            $fp = fopen($path.$filename, 'w');
+//            fwrite($fp, $string);
+//            fclose($fp);
+            if(!is_dir($path)){
+                mkdir($path,0777,true);
+            }
+            file_put_contents($path.$filename,$string."\n", FILE_APPEND | LOCK_EX);
             if (empty ($string)) {
 
                 $data=array (

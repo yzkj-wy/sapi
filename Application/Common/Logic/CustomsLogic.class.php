@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace Common\Logic;
+use Common\Model\OfflineOrderModel;
 use Common\Tool\Tool;
 use Common\Model\CommonModel;
 use Common\Model\CusOrderModel;
@@ -84,6 +85,7 @@ class CustomsLogic extends AbstractGetDataLogic
     {
         $this->data = $data;
         $this->splitKey = $split;
+        $this->modelObj = new OfflineOrderModel();
 //        $this->modelObj = new CusOrderModel ();
 //        $this->order_goods_model = new CusOrderGoodsModel ();
 //        $this->storeModel = new StoreModel ();
@@ -246,12 +248,16 @@ class CustomsLogic extends AbstractGetDataLogic
     // 获取线下订单所有数据
     public function getOfflineOrderDetails()
     {
-        $where ['id'] = $this->data ['id'];
-        $where ['store_id'] = $this->data ['store_id'];
+//        var_dump( $this->data);
+        $where ['id'] = $this->data ['order_id'];
+//        $where ['store_id'] = $this->data ['store_id'];
         $field = '*';
-        $way = 'find';
-        $rest = $this->modelObj->getOrderByWhere($where, $field, $way);
-        $rest=$rest[0];
+//        $way = 'find';
+        $rest = M('offline_order')->field($field)->where($where)->find();
+//        var_dump( $rest);
+//        var_dump( 'first'."\n");
+//        var_dump( $rest);
+//        var_dump("\n");
         if (empty ($rest)) {
             return array(
                 "status" => 0,
@@ -262,16 +268,26 @@ class CustomsLogic extends AbstractGetDataLogic
         $pay = M('pay')->where([
             'enterprise_name' => $rest ['pay_name'],
             'store_id' => $rest ['store_id']
-        ])->getField('payCode,pay_key,mchid');
+        ])->field('pay_code,pay_key,mchid')->select();
+//        var_dump( $pay);
+//        var_dump( $rest);
         $rest = array_merge($rest, $pay[0]);
+//        var_dump( 'pay'."\n");
+//        var_dump( $rest);
+//        var_dump( $rest);
+//        var_dump( $rest);
         $store = M('store')->where([
-            'store_id' => $rest ['store_id']
-        ])->getField('id,class_id,grade_id,user_id,store_state,store_sort,start_time,end_time,status,theme_id,store_collect,print_desc,store_sales,free_price,decoration_switch,
-       decoration_only,image_count,is_own,build_all,bar_type,create_time,update_time,type,store_logo,commission,description,wx_accout,alipay_account,bank_account,credibility,mobile,person_name',true);
+            'id' => $rest ['store_id']
+        ])->field('id,class_id,grade_id,user_id,store_state,store_sort,start_time,end_time,status,theme_id,store_collect,print_desc,store_sales,free_price,decoration_switch,
+       decoration_only,image_count,is_own,build_all,bar_type,create_time,update_time,type,store_logo,commission,description,wx_accout,alipay_account,bank_account,credibility,mobile,person_name',true)->select();
         $rest = array_merge($rest, $store[0]);
+//        var_dump( 'store');
+//        var_dump( $rest);
+//        var_dump( $rest);
+//        var_dump( $rest);
         $address= M('store_address')->where([
             'store_id' => $rest ['store_id']
-        ])->getField('id,store_zip,store_id',true);
+        ])->field('id,store_zip,store_id',true)->select();
         $shipper_city = M('region')->field('name')->where([
             'id' => $address [0]['prov_id']])->select();
         $rest ['shipper_city']=$shipper_city[0]['name'];
@@ -283,38 +299,34 @@ class CustomsLogic extends AbstractGetDataLogic
         $rest ['shipper_dist']=$shipper_dist[0]['name'];
         $rest ['shipper_country'] = $address [0]['country'];
         $rest ['shipper_address'] = $address [0]['address'];
-        $rest['taxFcy']=0;
-        $rest['taxTotal']=0;
+        $rest['taxfcy']=0;
+        $rest['taxtotal']=0;
         $rest['weight']=0;
         $rest['netwt']=0;
         $rest['goodlist'] = M('offline_order_goods')->field('add_time,save_time,id,order_sn_id',true)->where([
-            'order_sn_id' => $rest ['id']])->select();
+            'order_sn_id' => $rest ['order_sn_id']])->select();
         foreach ($rest ['goodlist'] as $key => $value) {
             $good= M('goods')->where([
                 'id' => $value ['goods_id']
-            ])->getField('*');
+            ])->field('*')->select();
             $rest ['goodlist'][$key] = array_merge($rest ['goodlist'][$key],$good[0]);
-            $rest['taxFcy']+=$rest ['goodlist'][$key]['taxFcy']*$rest ['goodlist'][$key]['goods_num'];
-            $rest['taxTotal']+=$rest ['goodlist'][$key]['taxTotal']*$rest ['goodlist'][$key]['goods_num'];
-            $rest['weight']+=$rest ['goodlist'][$key]['weight']*$rest ['goodlist'][$key]['goods_num'];
-            $rest['netwt']+=$rest ['goodlist'][$key]['netwt']*$rest ['goodlist'][$key]['goods_num'];
+            $rest['taxfcy']+=$rest ['goodlist'][$key]['taxfcy']*$rest['goodlist'][$key]['goods_num'];
+            $rest['taxtotal']+=$rest ['goodlist'][$key]['taxtotal']*$rest['goodlist'][$key]['goods_num'];
+            $rest['weight']+=$rest ['goodlist'][$key]['weight']*$rest['goodlist'][$key]['goods_num'];
+            $rest['netwt']+=$rest ['goodlist'][$key]['netwt']*$rest['goodlist'][$key]['goods_num'];
         }
 
         //修正参数
-        $rest['paymentOrderId']=$rest['payment_order_id'];
+        $rest['paymentorderId']=$rest['payment_order_id'];
         unset($rest['payment_order_id']);
         $rest['realname']=$rest['real_name'];
         unset($rest['real_name']);
-        $rest['IdNumber']=$rest['id_number'];
+        $rest['idnumber']=$rest['id_number'];
         unset($rest['id_number']);
         $rest['insurefee']=$rest['insure_fee'];
         unset($rest['insure_fee']);
-        $rest['TYPE']=$rest['type'];
-        unset($rest['type']);
         $rest['tpl']=$rest['tp_code '];
         unset($rest['tp_code ']);
-        $rest['busiMode']=$rest['busi_mode'];
-        unset($rest['busi_mode']);
         $rest['bak1']=$rest['bak_one'];
         unset($rest['bak_one']);
         $rest['bak2']=$rest['bak_two'];
@@ -326,12 +338,17 @@ class CustomsLogic extends AbstractGetDataLogic
         $rest['bak5']=$rest['bak_five'];
         unset($rest['bak_five']);
 
-        $path='/message/log/orderdetile/'.$rest['platform_short'].'/'.date('Ymd').'/';
+        $path='./message/log/orderdetile/'.$rest['platform_short'].'/'.date('Ymd').'/';
         $filename = $rest['platform_short'].'_'.$rest['order_sn_id'].'_'.date('YmdHis').'.txt';//xml文件名称
-        $fp = fopen($path.$filename, 'w');
-        fwrite($fp, json_encode($rest,320));
-        fclose($fp);
-
+//        var_dump( $path.$filename);
+//        $fp = fopen($path.$filename, 'w');
+//        var_dump( $fp);
+//        fwrite($fp, json_encode($rest,320));
+//        fclose($fp);
+        if(!is_dir($path)){
+            mkdir($path,0777,true);
+        }
+        file_put_contents($path.$filename,json_encode($rest,320)."\n", FILE_APPEND | LOCK_EX);
 //        if(empty($rest)){
 //            return array('status'=>0,'message'=>'暂无数据','data'=>'');
 //        }

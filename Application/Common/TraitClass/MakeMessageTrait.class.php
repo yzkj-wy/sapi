@@ -40,7 +40,7 @@ trait MakeMessageTrait {
         $discount = $data['coupon_deductible'];
         $buyerName = $data['realname'];
         $buyerIdType = 1;
-        $buyerIdNumber = $data['IdNumber'];
+        $buyerIdNumber = $data['idnumber'];
         $buyerTelephone = $data['mobile'];
         $buyerRegNo = null;
         $grossWeight = null;
@@ -108,7 +108,7 @@ trait MakeMessageTrait {
                 $goodList[$k]['decTotal'] = null;
                 $goodList[$k]['nots'] = null;
                 $goodList[$k]['custGoodsNo'] = null;
-                $goodList[$k]['ciqGoodsNo'] = $gooListValue['inspProdCbecCode'];
+                $goodList[$k]['ciqGoodsNo'] = $gooListValue['inspprodcbecCode'];
                 $goodList[$k]['batchNo'] = null;
                 $goodList[$k]['assemCountry'] = null;
                 $goodList[$k]['qtyUnit'] = null;
@@ -134,7 +134,7 @@ trait MakeMessageTrait {
         $recipient=array();
                 $recipient['name'] = $data['realname'];
                 $recipient['receiveType'] = 1;
-                $recipient['receiveNo'] = $data['IdNumber'];
+                $recipient['receiveNo'] = $data['idnumber'];
                 $recipient['mobilePhone'] = $data['mobile'];
                 $recipient['phone'] = null;
                 $recipient['country'] = '中国';
@@ -265,14 +265,14 @@ trait MakeMessageTrait {
         $CUS_ID = $data['mchid'];
         $PAYMENT_DATETIME = $data['pay_time'];
         $MCHT_ORDER_NO = $data['order_sn_id'];
-        $PAYMENT_ORDER_NO = $data['paymentOrderId'];
+        $PAYMENT_ORDER_NO = $data['paymentorderId'];
         $PAYMENT_AMOUNT = $data['actual_amount']*100;
         $CURRENCY = '156';
-        $ESHOP_ENT_CODE = $data['ebpCode'];
-        $ESHOP_ENT_NAME = $data['ebpName'];
+        $ESHOP_ENT_CODE = $data['ebpcode'];
+        $ESHOP_ENT_NAME = $data['ebpname'];
         $PAYER_NAME = $data['realname'];
         $PAPER_TYPE = '1';
-        $PAPER_NUMBER = $data['IdNumber'];
+        $PAPER_NUMBER = $data['idnumber'];
         $PAPER_PHONE = $data['mobile'];
         $MEMO = null;
         $SIGN_MSG_Str=
@@ -340,38 +340,38 @@ trait MakeMessageTrait {
         $MessageID = 'CBE103'.date('YmdHis').mt_rand(1111,9999);
         $FunctionCode = 'BC';
         $MessageType = 'CBE103';
-        $SenderID = $data['SenderID'];
+        $SenderID = $data['senderid'];
         $ReceiverID = '0';
         $SendTime = date('Y-m-dH:i:s');
         $Version = '1.0';
         $V_ORDERTYPE = '1';
         $V_ORDERNO = $data['order_sn_id'];
         $D_ORDERDATE = date('Y-m-d',strtotime($data['create_time'])).'T'.date('H:i:s',strtotime($data['create_time']));
-        $V_EBPCODE = $data['ebpCode'];
-        $V_EBCCODE = $data['ebcCode'];
-        $V_CBECOMCODE = $data['inspEntCode'];
-        $V_CBEPCOMCODE = $data['inspEcpCode'];
+        $V_EBPCODE = $data['ebpcode'];
+        $V_EBCCODE = $data['ebccode'];
+        $V_CBECOMCODE = $data['inspentcode'];
+        $V_CBEPCOMCODE = $data['inspecpcode'];
         $V_INTERNETDOMAINNAME = $data['domain_name'];
-        $V_PAYCODE = $data['payCode'];
+        $V_PAYCODE = $data['paycode'];
         $V_PAYNAME = $data['enterprise_name'];
-        $V_PAYTRANSACTIONID = $data['paymentOrderId'];
+        $V_PAYTRANSACTIONID = $data['paymentorderId'];
         $N_GOODSVALUE = $data['price_sum'] ;
         $N_FREIGHT = $data['freight'];
         $N_DISCOUNT = $data['coupon_deductible'];
-        $N_TAXTOTAL = $data['taxFcy'];
+        $N_TAXTOTAL = $data['taxtotal'];
         $N_ACTURALPAID = $data['actual_amount'];
         $V_CURRENCY = '142';
         $V_BUYERREGNO = $data['user_name'];
         $V_BUYERNAME = $data['realname'];
         $V_BUYERIDTYPE = '1';
-        $V_BUYERIDNUMBER = $data['IdNumber'];
+        $V_BUYERIDNUMBER = $data['idnumber'];
         $V_ORDERDOCTEL = $data['mobile'];
         $V_BATCHNUMBERS = null;
         $V_NOTE = null;
         $V_PLATFORM_NO = $data['platform_no'];
         $V_PLATFORM_SHORT = $data['platform_short'];
         $V_PL_BUSINESS_NO = $data['store_id'];
-        $V_PL_BUSINESS_SHORT = $data['ebpName'];
+        $V_PL_BUSINESS_SHORT = $data['ebpname'];
         $V_APPTYPE = $data['send_express_status']?'1':'2';
         $N_INSUREFEE = $data['insurefee'];
         $N_WEIGHT = $data['weight'];
@@ -387,7 +387,7 @@ trait MakeMessageTrait {
                 $GoodInfoXML .= "<GoodInfo>";
                 $GoodInfoXML .= "<V_LOGISTICSORDERNO>".$data['express_id']."</V_LOGISTICSORDERNO>";
                 $GoodInfoXML .= "<N_GNUM>".($k * 1 + 1)."</N_GNUM>";
-                $GoodInfoXML .= "<V_ITEMNO>".$GoodInfoValue['inspProdCbecCode']."</V_ITEMNO>";
+                $GoodInfoXML .= "<V_ITEMNO>".$GoodInfoValue['inspprodcbeccode']."</V_ITEMNO>";
                 $GoodInfoXML .= "<V_ENTGOODSNO>".$GoodInfoValue['entgoodsno']."</V_ENTGOODSNO>";
                 $GoodInfoXML .= "<V_GOODSINFO>".$GoodInfoValue['description']."</V_GOODSINFO>";
                 $GoodInfoXML .= "<N_QTY>".$GoodInfoValue['goods_num']."</N_QTY>";
@@ -500,24 +500,24 @@ trait MakeMessageTrait {
         $appStatus = '2';
         $orderType = 'I';
         $orderNo = $data['order_sn_id'];
-        $ebpCode = $data['ebpCode'];
-        $ebpName = $data['ebpName'];
-        $ebcCode = $data['ebcCode'];
-        $ebcName = $data['ebcName'];
+        $ebpCode = $data['ebpcode'];
+        $ebpName = $data['ebpname'];
+        $ebcCode = $data['ebccode'];
+        $ebcName = $data['ebcname'];
         $goodsValue = $data['price_sum'];
         $freight = $data['freight'];
         $discount = $data['coupon_deductible'];
-        $taxTotal = $data['taxFcy'];
+        $taxTotal = $data['taxtotal'];
         $acturalPaid = $data['actual_amount'];
         $currency = '142';
         $buyerRegNo = $data['user_name'];
         $buyerName = $data['realname'];
         $buyerTelephone = $data['mobile'];
         $buyerIdType = '1';
-        $buyerIdNumber = $data['IdNumber'];
-        $payCode = $data['payCode'];
+        $buyerIdNumber = $data['idnumber'];
+        $payCode = $data['paycode'];
         $payName = $data['pay_name'];
-        $payTransactionId = $data['paymentOrderId'];
+        $payTransactionId = $data['paymentorderId'];
         $batchNumbers = null;
         $consignee = $data['realname'];
         $consigneeTelephone = $data['mobile'];
@@ -534,7 +534,7 @@ trait MakeMessageTrait {
                 $OrderListXML .= "<ceb:gnum>".($k * 1 + 1)."</ceb:gnum>";
                 $OrderListXML .= "<ceb:itemNo>".$OrderListValue['itemno']."</ceb:itemNo>";
                 $OrderListXML .= "<ceb:itemName>".$OrderListValue['title']."</ceb:itemName>";
-                $OrderListXML .= "<ceb:gmodel>".$OrderListValue['gmodel']."</ceb:gmodel>";
+                $OrderListXML .= "<ceb:gmodel>".$OrderListValue['inspprodspecs']."</ceb:gmodel>";
                 $OrderListXML .= "<ceb:itemDescribe>".$OrderListValue['description']."</ceb:itemDescribe>";
                 $OrderListXML .= "<ceb:barCode></ceb:barCode>";
                 $OrderListXML .= "<ceb:unit>".$OrderListValue['unit1']."</ceb:unit>";
@@ -550,10 +550,10 @@ trait MakeMessageTrait {
             return "Error: recipient is not a array";
         }
 
-        $copCode = $data['copCode'];
-        $copName = $data['copName'];
+        $copCode = $data['copcode'];
+        $copName = $data['copname'];
         $dxpMode = 'DXP';
-        $dxpId = $data['dxpId'];
+        $dxpId = $data['dxpid'];
         $note_2 = null;
 
         //签名
@@ -571,15 +571,15 @@ trait MakeMessageTrait {
         $X509Certificate = null;
 
         $procTarget = $type;
-        $agentCode = $data['agentCode'];
-        $inspEntCode = $data['inspCbeCode'];
-        $inspEntName = $data['inspEntName'];
-        $inspEcpCode = $data['inspEcpCode'];
-        $inspCbeCode = $data['inspCbeCode'];
+        $agentCode = $data['agentcode'];
+        $inspEntCode = $data['inspcbeCode'];
+        $inspEntName = $data['inspentName'];
+        $inspEcpCode = $data['inspecpCode'];
+        $inspCbeCode = $data['inspcbeCode'];
         $inspCurrUnit = '142';
-        $inspBizType = $data['busimode']=='BBC'?'1':'2';
+        $inspBizType = $data['busi_mode']=='BBC'?'1':'2';
         $inspTradeCtryCode = $data['country'];
-        $inspOrgCode = $data['inspOrgCode'];
+        $inspOrgCode = $data['insporgcode'];
 
         //InspOrderList
         $InspOrderList = $data['goodlist'];
@@ -592,11 +592,11 @@ trait MakeMessageTrait {
                 $InspOrderListtXML .= "<inspOriCtryCode>" . $OrderListValue['country'] . "</inspOriCtryCode>";
                 $InspOrderListtXML .= "<inspQtyUnitCode>" . $OrderListValue['unit'] . "</inspQtyUnitCode>";
                 $InspOrderListtXML .= "<inspPackNumber>" . $OrderListValue['goods_num'] . "</inspPackNumber>";
-                $InspOrderListtXML .= "<spPinackTypeCode>" . $OrderListValue['note2'] . "</inspPackTypeCode>";
-                $InspOrderListtXML .= "<inspProdSpecs>" . $OrderListValue['inspProdSpecs'] . "</inspProdSpecs>";
+                $InspOrderListtXML .= "<inspPackTypeCode>" . $OrderListValue['note2'] . "</inspPackTypeCode>";
+                $InspOrderListtXML .= "<inspProdSpecs>" . $OrderListValue['inspprodspecs'] . "</inspProdSpecs>";
                 $InspOrderListtXML .= "<inspGrossWeight>" . ($OrderListValue['weight'] * $OrderListValue['goods_num']) . "</inspGrossWeight>";
-                $InspOrderListtXML .= "<inspProdCbecCode>" . $OrderListValue['inspProdCbecCode'] . "</inspProdCbecCode>";
-                $OrderListXML .= "</InspOrderList>";
+                $InspOrderListtXML .= "<inspProdCbecCode>" . $OrderListValue['inspprodcbeccode'] . "</inspProdCbecCode>";
+                $InspOrderListtXML .= "</InspOrderList>";
             }
         }
 
@@ -632,10 +632,10 @@ trait MakeMessageTrait {
                     '<ceb:consignee>'.$consignee.'</ceb:consignee>'.
                     '<ceb:consigneeTelephone>'.$consigneeTelephone.'</ceb:consigneeTelephone>'.
                     '<ceb:consigneeAddress>'.$consigneeAddress.'</ceb:consigneeAddress>'.
-                    '<ceb:consigneeDitrict>'.$consigneeDitrict.'</ceb:consigneeDitrict>'.
+//                    '<ceb:consigneeDitrict>'.$consigneeDitrict.'</ceb:consigneeDitrict>'.
                     '<ceb:note>'.$note.'</ceb:note>'.
                 '</ceb:OrderHead>'.
-                $OrderList.
+            $OrderListXML.
             '</ceb:Order>'.
             '<ceb:BaseTransfer>'.
                 '<ceb:copCode>'.$copCode.'</ceb:copCode>'.
@@ -661,7 +661,7 @@ trait MakeMessageTrait {
                         '<inspTradeCtryCode>'.$inspTradeCtryCode.'</inspTradeCtryCode>'.
                         '<inspOrgCode>'.$inspOrgCode.'</inspOrgCode>'.
                     '</BodyMaster>'.
-                    $InspOrderList.
+            $InspOrderListtXML.
                 '</ceb:Message>'.
             '</ceb:ExtendMessage>'.
             '<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">'.
@@ -692,9 +692,11 @@ trait MakeMessageTrait {
     //生产$guid
     public function create_guid($data){
         $string='';
-        if($data['busiMode']==BC)
+        if($data['busi_mode']==BC)
             $string=$data['csuc_code'].'AI'.substr(uniqid($data['id']),0,12).$data['platform_short'];
         else
             $string=$data['csuc_code'].'BI'.substr(uniqid($data['id']),0,12).$data['platform_short'];
+        return $string;
     }
+
 }

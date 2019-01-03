@@ -495,30 +495,30 @@ class OfflineOrderLogic extends AbstractGetDataLogic
                 if ($currentColumn == "N") {
                     $hz['wraptype'] = $cell;
                 }
-                if ($currentColumn == "O") {
-                    $hz['note2'] = $cell;
-                }
-                if ($currentColumn == "P") {
-                    $hz['unit'] = $cell;
-                }
-                if ($currentColumn == "Q") {
-                    $hz['unit1'] = $cell;
-                }
-                if ($currentColumn == "R") {
-                    $hz['unit2'] = $cell;
-                }
-                if ($currentColumn == "S") {
-                    $hz['qty1'] = $cell;
-                }
-                if ($currentColumn == "T") {
-                    $hz['qty2'] = $cell;
-                }
-                if ($currentColumn == "U") {
-                    $hz['taxTotal'] = $cell;
-                }
-                if ($currentColumn == "V") {
-                    $hz['taxFcy'] = $cell;
-                }
+            if ($currentColumn == "O") {
+                $hz['note2'] = $cell;
+            }
+            if ($currentColumn == "P") {
+                $hz['unit'] = $cell;
+            }
+            if ($currentColumn == "Q") {
+                $hz['unit1'] = $cell;
+            }
+            if ($currentColumn == "R") {
+                $hz['unit2'] = $cell;
+            }
+            if ($currentColumn == "S") {
+                $hz['qty1'] = $cell;
+            }
+            if ($currentColumn == "T") {
+                $hz['qty2'] = $cell;
+            }
+            if ($currentColumn == "U") {
+                $hz['taxTotal'] = $cell;
+            }
+            if ($currentColumn == "V") {
+                $hz['taxFcy'] = $cell;
+            }
             }
             $arr[] = $hz;
         }
